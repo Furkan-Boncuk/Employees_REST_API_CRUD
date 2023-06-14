@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -20,7 +20,7 @@ public class EmployeeController {
     private EmployeeRepository employeeRepository;
 
     @PostMapping("/employees")
-    public String createNewEmployee(@RequestBody  Employee employee) {
+    public String createNewEmployee(@RequestBody Employee employee) {
         employeeRepository.save(employee);
         return "Employee Created in database";
     }
@@ -59,8 +59,23 @@ public class EmployeeController {
         }
     }
 
-    @DeleteMapping()
+    @DeleteMapping("/employees/{id}")
+    public String deleteEmployeeById(@PathVariable int id) {
+        employeeRepository.deleteById(id);
+        return "Employee Deleted Successfully";
+    }
+
+    @DeleteMapping("/employees")
+    public String deleteAllEmployee() {
+        employeeRepository.deleteAll();
+        return "Employee Deleted Successfully..";
+    }
 
 
+    // !!!!!!!!
+    @GetMapping("/api/employees")
+    public List<Employee> searchEmployeesByCity(@RequestParam("city") String city) {
+        return employeeRepository.findAll().stream().filter(employee -> employee.getCity().equals(city)).collect(Collectors.toList());
+    }
 
 }
