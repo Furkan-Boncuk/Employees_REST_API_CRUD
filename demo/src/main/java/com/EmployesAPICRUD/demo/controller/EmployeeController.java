@@ -2,6 +2,7 @@ package com.EmployesAPICRUD.demo.controller;
 
 import com.EmployesAPICRUD.demo.model.Employee;
 import com.EmployesAPICRUD.demo.repository.EmployeeRepository;
+import com.EmployesAPICRUD.demo.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,9 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     @PostMapping("/employees")
     public String createNewEmployee(@RequestBody Employee employee) {
@@ -74,8 +78,10 @@ public class EmployeeController {
 
     // !!!!!!!!
     @GetMapping("/api/employees")
-    public List<Employee> searchEmployeesByCity(@RequestParam("city") String city) {
-        return employeeRepository.findAll().stream().filter(employee -> employee.getCity().equals(city)).collect(Collectors.toList());
+    public ResponseEntity<List<Employee>> searchEmployeesByCity(@RequestParam("city") String city) {
+        List<Employee> employees = employeeService.getEmployeeByCity(city);
+        return new ResponseEntity<List<Employee>>(employees,HttpStatus.OK);
     }
+
 
 }
